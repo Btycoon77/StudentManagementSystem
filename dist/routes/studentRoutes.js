@@ -5,9 +5,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const studentController_1 = __importDefault(require("../controller/studentController"));
+const BridgeService_1 = __importDefault(require("../services/BridgeService"));
+const bridgeController_1 = __importDefault(require("../controller/bridgeController"));
+const functions_1 = __importDefault(require("../sqlfunctions/functions"));
 const studentRouter = (0, express_1.Router)();
-studentRouter.put('/updateStudent/:id', studentController_1.default.updateStudent);
+studentRouter.put('/updateStudent/:guid', studentController_1.default.updateStudent);
 studentRouter.get('/getAllStudents', studentController_1.default.getAllStudents);
 studentRouter.post('/createStudent', studentController_1.default.createStudent);
-studentRouter.delete('/deleteStudent/:id', studentController_1.default.deleteStudent);
+//  for dbfunctions route 
+studentRouter.post('/createStudentFromDb', functions_1.default.registerStudent);
+studentRouter.delete('/deleteStudent/:guid', studentController_1.default.deleteStudent);
+//  route for choosing the subject;
+studentRouter.post('/chooseSubjects/:student_id', BridgeService_1.default.chooseSubjects);
+//  route for choosing specific students;
+studentRouter.get('/getStudentWithSubjects/:student_id', BridgeService_1.default.getOneStudentsWithSubjects);
+studentRouter.get('/getStudentWithSubjects', bridgeController_1.default.getStudentsWithSubjects);
+// route for student pagination;
+studentRouter.get('/studentPagination', studentController_1.default.getPaginatedStudents);
+// route for db function pagination;
+studentRouter.get('/studentPaginationDb', studentController_1.default.getDBfunctionPagination);
+//  route for studentSubjectPagination;
+studentRouter.get('/studentSubjectPagination', bridgeController_1.default.getStudentSubjectPagination);
+// studentRouter.get("/studentPagination'?pageSize=10&page=1&search='Ram'&orderBy='student_id'&orderDir='ASC'",studentController.getPaginatedStudents);
 exports.default = studentRouter;

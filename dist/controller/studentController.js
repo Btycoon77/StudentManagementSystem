@@ -36,9 +36,9 @@ class StudentController {
     //  create student
     createStudent(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { student_name, age } = req.body;
+            const studentData = req.body;
             try {
-                const student = yield studentService_1.default.createStudent(student_name, age);
+                const student = yield studentService_1.default.createStudent(studentData);
                 res.status(201).json({
                     success: true,
                     data: student
@@ -56,9 +56,9 @@ class StudentController {
     //  delete student
     deleteStudent(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const studentId = req.params.id;
+            const guid = req.params.guid;
             try {
-                const success = yield studentService_1.default.deleteStudent(studentId);
+                const success = yield studentService_1.default.deleteStudent(guid);
                 if (success) {
                     res.status(201).json({
                         success: true,
@@ -83,11 +83,11 @@ class StudentController {
     //  update student
     updateStudent(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const studentId = req.params.id;
+            const guid = req.params.guid;
             const { student_name, age } = req.body;
             //  these names should be exact name of the column in database;
             try {
-                const success = yield studentService_1.default.updateStudent(studentId, student_name, age);
+                const success = yield studentService_1.default.updateStudent(guid, student_name, age);
                 if (success) {
                     res.status(201).json({
                         success: true,
@@ -106,6 +106,47 @@ class StudentController {
                     success: false,
                     error: "Internal server error"
                 });
+            }
+        });
+    }
+    // pagination controller;
+    getPaginatedStudents(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const queryParams = {
+                pageSize: req.query.pageSize,
+                page: req.query.page,
+                search: req.query.search,
+                orderBy: req.query.orderBy,
+                orderDir: req.query.orderDir
+            };
+            try {
+                const result = yield studentService_1.default.getPaginatedStudents(queryParams);
+                res.status(201).json(result);
+            }
+            catch (error) {
+                console.log(error);
+                res.status(500).json({
+                    error: "Internal server error"
+                });
+            }
+        });
+    }
+    getDBfunctionPagination(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const queryParams = {
+                pageSize: parseInt(req.query.pageSize),
+                page: parseInt(req.query.page),
+                search: req.query.search,
+                orderBy: req.query.orderBy,
+                orderDir: req.query.orderDir
+            };
+            try {
+                const result = yield studentService_1.default.dbFunctionPagination(queryParams);
+                console.log("from controller", result);
+                res.status(201).send(result);
+            }
+            catch (error) {
+                res.status(501).json({ error: "Internal server error" });
             }
         });
     }

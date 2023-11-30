@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BridgeModel = void 0;
 const sequelize_1 = require("sequelize");
 const connectDb_1 = require("../db/connectDb");
-exports.BridgeModel = connectDb_1.connectDb.define("studentSubject", {
+exports.BridgeModel = connectDb_1.connectDb.define("studentsubjects", {
     studsub_id: {
         type: sequelize_1.DataTypes.INTEGER,
         autoIncrement: true,
@@ -22,6 +22,12 @@ exports.BridgeModel = connectDb_1.connectDb.define("studentSubject", {
             key: "subject_id"
         }
     },
+    datedeleted: {
+        type: sequelize_1.DataTypes.DATE,
+    },
+    datecreated: {
+        type: sequelize_1.DataTypes.DATE,
+    },
     // foreign key
     student_id: {
         type: sequelize_1.DataTypes.INTEGER,
@@ -29,7 +35,8 @@ exports.BridgeModel = connectDb_1.connectDb.define("studentSubject", {
         references: {
             model: "students",
             key: "student_id"
-        }
+        },
     }
-}, { freezeTableName: true });
+}, { freezeTableName: true, timestamps: false });
 // BridgeModel.sync({alter:true});
+// BridgeModel.belongsTo(StudentModel)

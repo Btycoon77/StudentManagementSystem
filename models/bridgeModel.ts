@@ -1,7 +1,8 @@
-import {DataTypes, Model, UUIDV4} from 'sequelize';
+import {DataTypes, UUIDV4} from 'sequelize';
 import { connectDb } from '../db/connectDb';
 
-export const BridgeModel = connectDb.define("studentSubject",{
+
+export const BridgeModel = connectDb.define("studentsubjects",{
     studsub_id:{
         type:DataTypes.INTEGER,
         autoIncrement:true,
@@ -22,6 +23,14 @@ export const BridgeModel = connectDb.define("studentSubject",{
         }
 
     },
+    datedeleted:{
+        type: DataTypes.DATE,
+
+    },
+    datecreated:{
+        type: DataTypes.DATE,
+        
+    },
     // foreign key
     student_id:{
         type:DataTypes.INTEGER,
@@ -29,8 +38,10 @@ export const BridgeModel = connectDb.define("studentSubject",{
         references:{
             model:"students",
             key:"student_id"
-        }
+        },
+    
     }
-},{freezeTableName:true});
+},{freezeTableName:true,timestamps:false});
 
 // BridgeModel.sync({alter:true});
+// BridgeModel.belongsTo(StudentModel)

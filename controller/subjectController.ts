@@ -21,10 +21,10 @@ class SubjectController{
     }
     //  create subject
     async createSubject(req:Request,res:Response):Promise<void>{
-        const {subject_name} = req.body;
+        const subjects = req.body;
         
         try {
-            const subject = await subjectService.createSubject(subject_name);
+            const subject = await subjectService.createSubject(subjects);
             res.status(201).json({
                 success:true,
                 data:subject
@@ -40,10 +40,10 @@ class SubjectController{
 
         //  delete subject
         async deleteSubject(req:Request,res:Response):Promise<void>{
-            const subjectId = req.params.id;
+            const guid = req.params.guid;
 
             try {
-                const success = await subjectService.deleteSubject(subjectId);
+                const success = await subjectService.deleteSubject(guid);
                 if(success){
                     res.status(201).json({
                         success:true,
@@ -65,12 +65,12 @@ class SubjectController{
         }
     //  update subject
     async updateSubject(req:Request,res:Response):Promise<void>{
-        const subject_id = req.params.id;
+        const guid = req.params.guid;
         const{subject_name} = req.body;
         //  these names should be exact name of the column in database;
 
         try {
-            const success = await subjectService.updateSubject(subject_id,subject_name);
+            const success = await subjectService.updateSubject(guid,subject_name);
 
             if(success){
                 res.status(201).json({

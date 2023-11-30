@@ -36,9 +36,9 @@ class SubjectController {
     //  create subject
     createSubject(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { subject_name } = req.body;
+            const subjects = req.body;
             try {
-                const subject = yield subjectService_1.default.createSubject(subject_name);
+                const subject = yield subjectService_1.default.createSubject(subjects);
                 res.status(201).json({
                     success: true,
                     data: subject
@@ -56,9 +56,9 @@ class SubjectController {
     //  delete subject
     deleteSubject(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const subjectId = req.params.id;
+            const guid = req.params.guid;
             try {
-                const success = yield subjectService_1.default.deleteSubject(subjectId);
+                const success = yield subjectService_1.default.deleteSubject(guid);
                 if (success) {
                     res.status(201).json({
                         success: true,
@@ -83,11 +83,11 @@ class SubjectController {
     //  update subject
     updateSubject(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const subject_id = req.params.id;
+            const guid = req.params.guid;
             const { subject_name } = req.body;
             //  these names should be exact name of the column in database;
             try {
-                const success = yield subjectService_1.default.updateSubject(subject_id, subject_name);
+                const success = yield subjectService_1.default.updateSubject(guid, subject_name);
                 if (success) {
                     res.status(201).json({
                         success: true,

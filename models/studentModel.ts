@@ -1,32 +1,69 @@
 import {DataTypes, Model, UUIDV4} from 'sequelize';
 import { connectDb } from '../db/connectDb';
+import  SubjectModel  from './subjectModel';
+import { BridgeModel } from './bridgeModel';
 
-export const StudentModel = connectDb.define("students",{
-    student_id:{
-        type:DataTypes.INTEGER,
-        autoIncrement:true,
-        allowNull:false,
-        primaryKey:true
+export interface Student{
+    student_id: number;
+    student_name:string;
+    age:number;
+    guid:string;
+    datedeleted: Date;
+    datecreated: Date;
+}
+
+
+class StudentModel extends Model<Student> {
+    
+}
+
+StudentModel.init(
+  {
+    student_id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      allowNull: false,
+      primaryKey: true,
     },
-    guid:{
-        type:DataTypes.UUID,
-        allowNull:false,
-        defaultValue:UUIDV4,
+    student_name: {
+      type: DataTypes.STRING,
+    },
+    age: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    guid: {
+      type: DataTypes.UUID,
+      defaultValue:UUIDV4,
+    },
+    datedeleted:{
+        type: DataTypes.DATE,
         
-    },
-    student_name:{
-        type:DataTypes.STRING,
-        allowNull:false
 
     },
-    age:{
-        type:DataTypes.INTEGER,
-        allowNull:false,
+    datecreated:{
+        type: DataTypes.DATE,
+        defaultValue:Date.now(),
+        
     }
-},{timestamps:true,freezeTableName:true,
-});
+  },
+  { sequelize: connectDb, modelName: 'students',freezeTableName:true,timestamps:false}
+);
 
 // StudentModel.sync({alter:true});
+
+// to establish one-to-many relations between tables;
+
+// StudentModel.hasMany(BridgeModel,{foreignKey:'student_id'});
+
+// to establish many-to-many relations between the tables I must use belongsToMany();
+
+StudentModel.belongsToMany(SubjectModel,{through:BridgeModel,foreignKey:'student_id'});
+
+SubjectModel.belongsToMany(StudentModel,{through:BridgeModel,foreignKey:'subject_id'});
+
+export default StudentModel;
+
 
 
 

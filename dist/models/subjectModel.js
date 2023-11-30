@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SubjectModel = void 0;
 const sequelize_1 = require("sequelize");
 const connectDb_1 = require("../db/connectDb");
-exports.SubjectModel = connectDb_1.connectDb.define("subjects", {
+class SubjectModel extends sequelize_1.Model {
+}
+SubjectModel.init({
     subject_id: {
         type: sequelize_1.DataTypes.INTEGER,
         autoIncrement: true,
@@ -17,5 +18,13 @@ exports.SubjectModel = connectDb_1.connectDb.define("subjects", {
     subject_name: {
         type: sequelize_1.DataTypes.STRING,
     },
-}, { timestamps: true, freezeTableName: true });
+    datedeleted: {
+        type: sequelize_1.DataTypes.DATE,
+    },
+    datecreated: {
+        type: sequelize_1.DataTypes.DATE,
+        defaultValue: Date.now()
+    },
+}, { sequelize: connectDb_1.connectDb, modelName: 'subjects', freezeTableName: true, timestamps: false });
 // SubjectModel.sync({alter:true});
+exports.default = SubjectModel;

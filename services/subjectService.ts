@@ -1,22 +1,33 @@
-import { SubjectModel } from "../models/subjectModel";
+import { Op, literal } from "sequelize";
+import  SubjectModel, { Subject }  from "../models/subjectModel";
 
 class SubjectService{
    
     //  to get all students
     async getAllSubjects():Promise<any[]>{
-        return await SubjectModel.findAll();
+        return await SubjectModel.findAll({
+            where:{
+                datedeleted:{
+                    [Op.is]:literal('null')
+                }
+            }
+        });
     }
     
     //  to create subject
-    async createSubject(subject_name:string):Promise<any>{
-            return await SubjectModel.create({subject_name});
+    async createSubject(subject: Subject):Promise<any>{
+            return await SubjectModel.create(subject);
             // whatever the name of the column in database it should be the same 
     }
 
     //  to delete subjects
-    async deleteSubject(subject_id:any):Promise<boolean>{
+    async deleteSubject(guid:any):Promise<boolean>{
         try {
-            const subject = await SubjectModel.findByPk(subject_id);
+            const subject = await SubjectModel.findOne({
+                where:{
+                    guid:guid
+                }
+            });
             // alterntively I can do this too.
             // const result = await SubjectModel.destroy({
             //     where:{
@@ -26,7 +37,7 @@ class SubjectService{
             if(!subject){
                 return false;
             }
-            await subject.destroy();
+            await subject.update({datedeleted: literal('NULL')})
             return true;
         } catch (error) {
             console.log(error);
@@ -35,9 +46,13 @@ class SubjectService{
     }
     //  to update the subject
 
-    async updateSubject(subjectId:any,subject_name:string):Promise<boolean>{
+    async updateSubject(guid:any,subject_name:string):Promise<boolean>{
         try {
-            const subject:any = await SubjectModel.findByPk(subjectId);
+            const subject:any = await SubjectModel.findOne({
+                where:{
+                    guid:guid
+                }
+            });
             if(!subject){
                 return false
             }

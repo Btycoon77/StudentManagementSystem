@@ -1,4 +1,5 @@
-import { Express, Request,Response } from "express";
+import {  Request,Response } from "express";
+
 import express from 'express';
 import dotenv from 'dotenv';
 import { db } from "./config/configDb";
@@ -9,7 +10,7 @@ import subjectRouter from "./routes/subjectRoutes";
 
 dotenv.config();
 
-const app:Express = express();
+const app = express();
 const port = process.env.PORT;
 
 //  connect to the database;
