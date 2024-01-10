@@ -17,21 +17,19 @@ const studentModel_1 = __importDefault(require("../models/studentModel"));
 const sequelize_2 = require("sequelize");
 const connectDb_1 = require("../db/connectDb");
 class StudentService {
-    //  to get all students
-    getAllStudents() {
+    //  to create student
+    createStudent(studentData, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield studentModel_1.default.findAll({
+            //  check if student exist;
+            const checkStudent = yield studentModel_1.default.count({
                 where: {
-                    datedeleted: {
-                        [sequelize_1.Op.is]: (0, sequelize_2.literal)('null')
-                    }
+                    student_name: studentData.student_name,
                 }
             });
-        });
-    }
-    //  to create student
-    createStudent(studentData) {
-        return __awaiter(this, void 0, void 0, function* () {
+            if (checkStudent > 0) {
+                next(Error("student with that name already exists"));
+                // throw Error("student with that name already exists");
+            }
             return yield studentModel_1.default.create(studentData);
             // whatever the name of the column in database it should be the same 
         });
@@ -45,21 +43,38 @@ class StudentService {
                         guid: guid
                     }
                 });
-                // alterntively I can do this too.
-                // const result = await StudentModel.destroy({
-                //     where:{
-                //         student_id:studentId
-                //     }
-                // });
                 if (!student) {
                     return false;
                 }
-                yield student.update({ datedeleted: (0, sequelize_2.literal)('NULL') });
+                console.log("delete student", student);
+                yield studentModel_1.default.update({ datedeleted: new Date() }, { where: {
+                        guid: guid
+                    } });
                 return true;
             }
             catch (error) {
                 console.log(error);
                 return false;
+            }
+        });
+    }
+    //  hard deleting the student;
+    hardDelete(guid) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const student = yield studentModel_1.default.findOne({
+                    where: {
+                        guid: guid
+                    }
+                });
+                if (!student) {
+                    return false;
+                }
+                yield student.destroy();
+                return true;
+            }
+            catch (error) {
+                console.log(error);
             }
         });
     }
@@ -86,37 +101,42 @@ class StudentService {
             }
         });
     }
-    getPaginatedStudents(queryParams) {
+    getListOfStudents(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
             const { pageSize, page, search, orderBy, orderDir } = queryParams;
             const offset = (page - 1) * pageSize;
-            // const sql= " SELECT * FROM students  WHERE student_name LIKE '%Ram' ORDER BY student_id ASC LIMIT '10' OFFSET 0;";
+            // const sql= " SELECT * FROM students  WHERE student_name LIKE '%Ram%' ORDER BY student_id ASC LIMIT '10' OFFSET 0;";
             // whenver you want to inject sequelize property then make the use of {}
             const students = yield studentModel_1.default.findAndCountAll({
                 limit: pageSize,
                 offset: offset,
+                attributes: ['guid', 'student_name', 'age'],
                 where: {
                     student_name: {
-                        [sequelize_1.Op.iLike]: `%${search}`
+                        [sequelize_1.Op.iLike]: `%${search}%`
                     },
+                    datedeleted: {
+                        [sequelize_1.Op.is]: (0, sequelize_2.literal)('null')
+                    }
                 },
                 order: [[orderBy, orderDir]]
             });
             const totalPages = Math.ceil(students.count / pageSize);
             const result = {
-                pageSize,
-                page,
-                totalPages,
+                //   pageSize,
+                //   page,
+                //   totalPages,
                 students: students.rows
             };
             return result;
         });
     }
+    //  GETTING STUDENT DETAILS ONLY , NO SUBJECT!
     dbFunctionPagination(params) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { pageSize, page, search, orderBy, orderDir } = params;
-                const result = yield connectDb_1.connectDb.query(`SELECT * FROM get_paginated_studentss(:pageSize, :page, :search, :orderBy, :orderDir)`, {
+                const result = yield connectDb_1.connectDb.query(`SELECT * FROM get_paginated_students(:pageSize, :page, :search, :orderBy, :orderDir)`, {
                     replacements: {
                         pageSize, page, search, orderBy, orderDir
                     }
@@ -129,5 +149,58 @@ class StudentService {
             }
         });
     }
+    //  getting student and subject join
+    dbFunctionJoinPagination(params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { page, pageSize, search, orderBy, orderDir } = params;
+                const result = yield connectDb_1.connectDb.query(`Select * from getpaginationjoin1(:page,:pageSize,:search,:orderBy,:orderDir)`, {
+                    replacements: {
+                        page, pageSize, search, orderBy, orderDir
+                    }
+                });
+                return result[0];
+            }
+            catch (error) {
+                console.log(error);
+            }
+        });
+    }
+    dbJoin() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const result = yield connectDb_1.connectDb.query(`Select * from get_student_subject_info()`);
+                return result[0];
+            }
+            catch (error) {
+                console.log(error);
+            }
+        });
+    }
 }
 exports.default = new StudentService();
+// {
+//     // dont write info
+//         "StudentId": "<uuid>",
+//         "StudentName":"",
+//         "subjects":[
+//             {
+//                 "SubjectId":"",
+//                 "SubjectName":""
+//             },{}
+//         ]
+//     }
+// post ma pagination chahidaian
+// get ma pagination chahinxa;
+//  check if student exist
+// delete ma json hunuvayena
+//  delete grda 204 status code huna pryo
+//  update grda , create grda 201.
+//  retrieve grda 200 
+// authorizatoin error 401.
+// bad request 400
+// resource not found 404
+// internal server error 500
+//  validation error(conflict error) 409 (duplicate data error)
+// 
+//# sourceMappingURL=studentService.js.map

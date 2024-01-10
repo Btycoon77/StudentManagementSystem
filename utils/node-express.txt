@@ -1,0 +1,44 @@
+to run typescript with node and express:
+execute the following commands;
+
+1. INSTALLING typescript
+
+npm i -D typescript @types/express @types/node
+
+2. GENERATING tsconfig.json
+
+npx tsc --init
+
+3.By default, the value of this option is set to the root directory. Change it to dist:
+
+{
+  "compilerOptions": {
+    "outDir": "./dist"
+
+    // rest options remain same
+  }
+}
+
+4. watching file changes and build directory
+
+ npm install -D concurrently nodemon.
+
+After installing these dev dependencies, update the scripts in the package.json file:
+
+{
+  "scripts": {
+    "build": "npx tsc",
+    "start": "node dist/index.js",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\""
+  }
+}
+
+
+5. run the node application;
+
+npm run dev
+
+
+
+
+

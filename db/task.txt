@@ -1,1 +1,152 @@
-creating a function in postgres for student
+1. create marks column in bridge table;
+
+
+2. insert subject marks of indivdiaul student in the marks obtained  of bridge table and calculate percentatge
+ 
+3. in studentlist(pagination) and studentdetails (id) ma chai percentatge dekina pryo.(node add gara).
+
+4. make this in a pdf format. (make seperate end point);
+
+
+5.create a trigger that deletes the student realated inforamtion when you   deltete the student;
+
+6.create a trigger that deletes the subject realated inforamtion when you deltete the student;
+
+////// USE RECURSION;    
+
+7.create table named as chapter with field name  id(pk),ChapterName, Description,parent_id(afnai table sanga ko fk) ,subject_id(fk)
+
+
+DATA:
+
+[
+  {
+    "ChapterName": "unit1",
+    "desc": "this is chapter 1",
+    "subject_id": 227,
+    "children": [
+      {
+        "ChapterName": "unit1.1",
+        "chapter_id": 2,
+        "desc": "this is chapter 1.1",
+        "parent_id": 1,
+        "subject_id": 227,
+        "children": [
+          {
+            "ChapterName": "unit1.1.1",
+            "chapter_id": 4,
+            "desc": "this is chapter 1.1.1",
+            "parent_id": 2,
+            "subject_id": 227
+          },
+          {
+            "ChapterName": "unit1.1.2",
+            "chapter_id": 5,
+            "desc": "this is chapter 1.1.2",
+            "parent_id": 2,
+            "subject_id": 227
+          }
+        ]
+      },
+      {
+        "ChapterName": "unit1.2",
+        "chapter_id": 3,
+        "desc": "this is chapter 1.2",
+        "parent_id": 1,
+        "subject_id": 227
+      }
+    ]
+  }
+]
+
+  
+2. new task 
+
+=> create post api where chapter_id and parent_id is not in the payload.
+=> it should be inserted on the basis of chapter name where chapter_name must be unique;
+=> nested array should be as a payload
+=> parent null vako chapter chai xuta xuttai nested object hunapryo .
+
+
+[
+  {
+    "ChapterName": "unit1",
+    "desc": "this is chapter 1",
+    "subject_id": 227,
+    "children": [
+      {
+        "ChapterName": "unit1.1",
+        
+        "desc": "this is chapter 1.1",
+        
+        "subject_id": 227,
+        "children": [
+          {
+            "ChapterName": "unit1.1.1",
+           
+            "desc": "this is chapter 1.1.1",
+           
+            "subject_id": 227
+          },
+          {
+            "ChapterName": "unit1.1.2",
+           
+            "desc": "this is chapter 1.1.2",
+           
+            "subject_id": 227
+          }
+        ]
+      },
+      {
+        "ChapterName": "unit1.2",
+        
+        "desc": "this is chapter 1.2",
+        
+        "subject_id": 227
+      }
+    ]
+  },
+  // next nested object of unit 2
+
+  
+[
+  {
+    "ChapterName": "unit2",
+    "desc": "this is chapter 1",
+    "subject_id": 227,
+    "children": [
+      {
+        "ChapterName": "unit1.1",
+        "chapter_id": 2,
+        "desc": "this is chapter 1.1",
+        "parent_id": 1,
+        "subject_id": 227,
+        "children": [
+          {
+            "ChapterName": "unit1.1.1",
+            "chapter_id": 4,
+            "desc": "this is chapter 1.1.1",
+            "parent_id": 2,
+            "subject_id": 227
+          },
+          {
+            "ChapterName": "unit1.1.2",
+            "chapter_id": 5,
+            "desc": "this is chapter 1.1.2",
+            "parent_id": 2,
+            "subject_id": 227
+          }
+        ]
+      },
+      {
+        "ChapterName": "unit1.2",
+        "chapter_id": 3,
+        "desc": "this is chapter 1.2",
+        "parent_id": 1,
+        "subject_id": 227
+      }
+    ]
+  }
+]
+
+]

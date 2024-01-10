@@ -12,3 +12,4 @@ const db = () => {
     }
 };
 exports.db = db;
+//# sourceMappingURL=configDb.js.map

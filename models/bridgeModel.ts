@@ -40,6 +40,9 @@ export const BridgeModel = connectDb.define("studentsubjects",{
             key:"student_id"
         },
     
+    },
+    marksobtained: {
+        type:DataTypes.INTEGER,
     }
 },{freezeTableName:true,timestamps:false});
 

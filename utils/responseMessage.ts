@@ -9,3 +9,13 @@ const responseMessage = (res: any, statusCode: number, data: any, message: strin
   };
   
   export { responseMessage };
+
+  // export enum Operation{
+  //   create,retrieve,update,delete
+  // };
+
+  // export enum State{
+  //   loading,
+  //   fulfilled,
+  //   error
+  // }

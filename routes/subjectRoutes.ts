@@ -3,13 +3,30 @@ import subjectController from '../controller/subjectController';
 
 const subjectRouter = Router();
 
-subjectRouter.put('/updateSubject/:guid',subjectController.updateSubject);
+subjectRouter.put('/subjects/:guid',subjectController.updateSubject);
 
-subjectRouter.get('/getAllSubjects',subjectController.getAllSubjects);
+// get subject by id
+subjectRouter.get('/subjects/:guid',subjectController.getSubjectById);
 
-subjectRouter.post('/createSubject',subjectController.createSubject);
+subjectRouter.get('/subjects',subjectController.getListOfSubjects);
 
-subjectRouter.delete('/deleteSubject/:guid',subjectController.deleteSubject);
+subjectRouter.post('/subjects',subjectController.createSubject);
+
+// to insert chapters recursively;
+subjectRouter.post('/subjects/chapters/bulk',subjectController.insertSubjectChaptersBulk);
+
+//  to insert chapter in bulk
+subjectRouter.post('/subjects/chapters',subjectController.insertSubjectChaptersRecurisively);
+
+// soft delete subject
+subjectRouter.delete('/subjects/:guid',subjectController.deleteSubject);
+
+// hard delete subject
+subjectRouter.delete('/hardDeleteSubject/:guid',subjectController.hardDelete);
+
+
+subjectRouter.get('/subjects/:guid/chapters',subjectController.getChapters);
+
 
 export default subjectRouter;
 

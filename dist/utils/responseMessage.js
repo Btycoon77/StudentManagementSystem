@@ -10,3 +10,12 @@ const responseMessage = (res, statusCode, data, message, method) => {
     });
 };
 exports.responseMessage = responseMessage;
+// export enum Operation{
+//   create,retrieve,update,delete
+// };
+// export enum State{
+//   loading,
+//   fulfilled,
+//   error
+// }
+//# sourceMappingURL=responseMessage.js.map

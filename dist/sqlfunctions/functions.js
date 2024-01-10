@@ -35,3 +35,4 @@ class DBfunctions {
     }
 }
 exports.default = new DBfunctions();
+//# sourceMappingURL=functions.js.map

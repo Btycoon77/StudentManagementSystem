@@ -18,10 +18,19 @@ const subjectModel_1 = __importDefault(require("../models/subjectModel"));
 const connectDb_1 = require("../db/connectDb");
 const sequelize_1 = require("sequelize");
 class BridgeService {
+    // POST : /students/::studentuuid
+    // Payload/Body : {StudentId:"",StudentName:"",Subjects:[{"SubjectId":"",SubjectName:""}]}
     chooseSubjects(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const student_id = req.params.student_id;
             const chooseSubjects = req.body.choosenSubjects; // Assuming an array of subjectids;
+            // if student guid exist then update 
+            // that student and save the student_id in  a varaible.
+            // since subjects comes in array , loop the subject
+            // if subject exist then update subject table otherwise insert that record in subject table.
+            // then subject_id of that particular insertion should be pushed into a seperate array.
+            // then insert this array into bridge table.
+            // eg: if ram has chosen gk subject then he cannot choose the same subject again.(dont insert that data) otherwise  insert data;
             try {
                 // here are two ids that are important namely student_id and subject_id
                 // Remove existing associations for the student(dupilcate data hatauna lai)
@@ -39,6 +48,35 @@ class BridgeService {
             catch (error) {
                 res.status(500).json("Internal server error");
                 console.log(error);
+            }
+        });
+    }
+    assignSubject(StudentId, StudentName, age, Subjects) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                //  
+                // we need to use make indexes here to uniquely identfy the student from the table.
+                //  first upserting the student 
+                const [student] = yield studentModel_1.default.upsert({
+                    student_name: StudentName,
+                    age: age
+                });
+                console.log('assign subject', student);
+                // secondly upserting the subject;
+                const subjectPromises = Subjects.map((subject) => __awaiter(this, void 0, void 0, function* () {
+                    try {
+                        const [subjectRecord] = yield subjectModel_1.default.upsert({ subject_name: subject.SubjectName });
+                        let data = yield bridgeModel_1.BridgeModel.upsert({ subject_id: subjectRecord.dataValues.subject_id, student_id: student.dataValues.student_id });
+                        console.log("from bridgemodel service", data);
+                    }
+                    catch (error) {
+                        console.log(error);
+                    }
+                }));
+                yield Promise.all(subjectPromises);
+            }
+            catch (error) {
+                console.log("Error in assigning subject", error);
             }
         });
     }
@@ -131,7 +169,7 @@ class BridgeService {
     getStudentsWithSubjectss(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const sql = `Select std.student_id ,std.student_name,sub.subject_id, sub.subject_name FROM Students std JOIN studentsubjects  studsub
+                const sql = `Select std.student_name ,std.student_name,sub.subject_id, sub.subject_name FROM Students std JOIN studentsubjects  studsub
             ON  std.student_id = studsub.student_id 
             JOIN subjects sub  ON  studsub.subject_id = sub.subject_id
             `;
@@ -142,12 +180,12 @@ class BridgeService {
                 console.log("from bridge service", studentSubject);
                 const formattedResult = studentSubject.map((row) => {
                     return {
-                        student_id: row.student_id,
-                        student_name: row.student_name,
-                        subjects: [
+                        StudentId: row.guid,
+                        StudentName: row.student_name,
+                        Subjects: [
                             {
-                                subject_id: row.subject_id,
-                                subject_name: row.subject_name,
+                                SubjectId: row.guid,
+                                SubjectName: row.subject_name,
                             },
                         ],
                     };
@@ -159,32 +197,47 @@ class BridgeService {
             }
         });
     }
-    // get one student and subjects
-    getOneStudentsWithSubjects(req, res) {
+    //  getting student by id with their chosen subjects
+    getStudentByID(guid) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const sql = `Select std.student_id ,std.student_name,sub.subject_id, sub.subject_name FROM Students std JOIN studentsubjects  studsub
-          ON  std.student_id = studsub.student_id 
-          JOIN subjects sub  ON  studsub.subject_id = sub.subject_id where student_id=${req.params.student_id}
-          `;
-                const studentSubject = yield connectDb_1.connectDb.query(sql, {
-                    type: sequelize_1.QueryTypes.SELECT,
-                    raw: true
+                const student = yield studentModel_1.default.findOne({
+                    where: {
+                        guid: guid,
+                    },
+                    include: [
+                        {
+                            model: subjectModel_1.default,
+                            attributes: ['subject_id', 'subject_name', 'guid']
+                        },
+                        // {
+                        //   model:BridgeModel,
+                        //   attributes:['marksobtained']
+                        // }
+                    ]
                 });
-                console.log("from bridge service", studentSubject);
-                const formattedResult = studentSubject.map((row) => {
+                if (!student) {
+                    throw Error('student not found');
+                }
+                let result = [];
+                result.push(student);
+                const formattedResult = result.map((row) => {
+                    console.log(row.marksobtained);
                     return {
-                        student_id: row.student_id,
-                        student_name: row.student_name,
-                        subjects: [
-                            {
-                                subject_id: row.subject_id,
-                                subject_name: row.subject_name,
-                            },
-                        ],
+                        StudentId: row.guid,
+                        StudentName: row.student_name,
+                        age: row.age,
+                        // Percentage: parseInt(row.marksobtained)/3*100,
+                        Subjects: row.subjects.map((sub) => {
+                            return {
+                                SubjectId: sub.guid,
+                                SubjectName: sub.subject_name
+                            };
+                        })
                     };
                 });
-                res.status(200).json(formattedResult);
+                console.log(formattedResult);
+                return formattedResult[0];
             }
             catch (error) {
                 console.log(error);
@@ -193,3 +246,4 @@ class BridgeService {
     }
 }
 exports.default = new BridgeService();
+//# sourceMappingURL=BridgeService.js.map

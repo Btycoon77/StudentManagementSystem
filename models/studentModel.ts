@@ -13,54 +13,99 @@ export interface Student{
 }
 
 
-class StudentModel extends Model<Student> {
+// class StudentModel extends Model<Student> {
+
     
-}
+// }
 
-StudentModel.init(
-  {
-    student_id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      allowNull: false,
-      primaryKey: true,
-    },
-    student_name: {
-      type: DataTypes.STRING,
-    },
-    age: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    guid: {
-      type: DataTypes.UUID,
-      defaultValue:UUIDV4,
-    },
-    datedeleted:{
-        type: DataTypes.DATE,
+// StudentModel.init(
+//   {
+//     student_id: {
+//       type: DataTypes.INTEGER,
+//       autoIncrement: true,
+//       allowNull: false,
+//       primaryKey: true,
+//     },
+//     student_name: {
+//       type: DataTypes.STRING,
+//     },
+//     age: {
+//       type: DataTypes.INTEGER,
+//       allowNull: false,
+//     },
+//     guid: {
+//       type: DataTypes.UUID,
+//       defaultValue:UUIDV4,
+//     },
+//     datedeleted:{
+//         type: DataTypes.DATE,
         
 
-    },
-    datecreated:{
-        type: DataTypes.DATE,
-        defaultValue:Date.now(),
+//     },
+//     datecreated:{
+//         type: DataTypes.DATE,
+//         defaultValue:Date.now(),
         
-    }
+//     }
+//   },
+//   { sequelize: connectDb, modelName: 'students',freezeTableName:true,timestamps:false}
+// );
+
+
+export const StudentModel = connectDb.define("students",{
+  student_id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
   },
-  { sequelize: connectDb, modelName: 'students',freezeTableName:true,timestamps:false}
-);
+  student_name: {
+    type: DataTypes.STRING,
+  },
+  age: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  guid: {
+    type: DataTypes.UUID,
+    defaultValue:UUIDV4,
+    unique:true
+  },
+  datedeleted:{
+      type: DataTypes.DATE,
+      
+      
 
-// StudentModel.sync({alter:true});
+  },
+  datecreated:{
+      type: DataTypes.DATE,
+      defaultValue:Date.now(),
+      
+  }
+},
+{ modelName: 'students',freezeTableName:true,timestamps:false});
+
+
+
+
+
+
+
+StudentModel.sync({alter:true});
 
 // to establish one-to-many relations between tables;
 
-// StudentModel.hasMany(BridgeModel,{foreignKey:'student_id'});
 
 // to establish many-to-many relations between the tables I must use belongsToMany();
+
+
 
 StudentModel.belongsToMany(SubjectModel,{through:BridgeModel,foreignKey:'student_id'});
 
 SubjectModel.belongsToMany(StudentModel,{through:BridgeModel,foreignKey:'subject_id'});
+
+// StudentModel.hasMany(BridgeModel,{foreignKey:'student_id'});
+
 
 export default StudentModel;
 

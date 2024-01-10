@@ -10,39 +10,75 @@ export interface Subject{
 }
 
 
-class SubjectModel extends Model<Subject> {
-    
-}
+export const SubjectModel = connectDb.define("subjects",{
+    subject_id:{
+                        type:DataTypes.INTEGER,
+                        autoIncrement:true,
+                        allowNull:false,
+                        primaryKey:true
+                    },
+                    guid:{
+                        type:DataTypes.UUID,
+                        defaultValue:UUIDV4,
+                        unique:true // must define this for upsert
+                        
+                    },
+                    subject_name:{
+                        type:DataTypes.STRING,
+                        unique:true
+                
+                    },
+                    datedeleted:{
+                        type: DataTypes.DATE,
+                        
+                
+                    },
+                    datecreated:{
+                        type: DataTypes.DATE,
+                        defaultValue: Date.now()
+                        
+                    },
+                    //tottal marks create field
+                    totalmarks:{
+                        type:DataTypes.INTEGER,
+                        defaultValue:100
+                    }
+},{freezeTableName:true,timestamps:false});
 
-SubjectModel.init(
-    {
-            subject_id:{
-                type:DataTypes.INTEGER,
-                autoIncrement:true,
-                allowNull:false,
-                primaryKey:true
-            },
-            guid:{
-                type:DataTypes.UUID,
-                defaultValue:UUIDV4
+
+// class SubjectModel extends Model<Subject> {
+    
+// }
+
+// SubjectModel.init(
+//     {
+//             subject_id:{
+//                 type:DataTypes.INTEGER,
+//                 autoIncrement:true,
+//                 allowNull:false,
+//                 primaryKey:true
+//             },
+//             guid:{
+//                 type:DataTypes.UUID,
+//                 defaultValue:UUIDV4
                 
-            },
-            subject_name:{
-                type:DataTypes.STRING,
+//             },
+//             subject_name:{
+//                 type:DataTypes.STRING,
         
-            },
-            datedeleted:{
-                type: DataTypes.DATE,
+//             },
+//             datedeleted:{
+//                 type: DataTypes.DATE,
                 
         
-            },
-            datecreated:{
-                type: DataTypes.DATE,
-                defaultValue: Date.now()
+//             },
+//             datecreated:{
+//                 type: DataTypes.DATE,
+//                 defaultValue: Date.now()
                 
-            },
-        },{ sequelize: connectDb, modelName: 'subjects',freezeTableName:true,timestamps:false}
-);
+//             },
+//         },{ sequelize: connectDb, modelName: 'subjects',freezeTableName:true,timestamps:false}
+// );
 
 // SubjectModel.sync({alter:true});
 

@@ -1,0 +1,123 @@
+task for ram
+
+tables:
+
+items
+	itemid primary code,
+	itemcode varchar, // manually rakhne ho
+	item_translationcode varchar  //  item_<itemid>  generate grne ho using function
+
+translations
+	translationid primary key,
+	translationcode varchar, // translation_<translationid>
+	text varchar,
+	language varchar
+
+item_translationcode => item_<itemid>
+
+
+APIs
+	
+	1. Get Items list
+		GET: /items?language=EN
+		Response Body:
+			[
+				{
+					itemid: 1,
+					itemcode: 'I1',
+					text: 'Book'
+				}
+			]
+		
+		if language=empty
+		Response Body:
+			[
+				{
+					itemid: 1,
+					itemcode: 'I1',
+					translations: 
+						[
+							{
+								translationid: 1,
+								text: 'Book',
+								language: 'EN'
+							},
+							{
+								translationid: 2,
+								text: 'Kitab',
+								language: 'NP'
+							}
+						]
+				}
+			]	
+
+	2. Get Item detail
+		GET: /items/1
+		Response body: 
+		{
+			itemid: 1,
+			itemcode: 'I1',
+			translations: [
+				{
+					translationid: 1,
+					text: 'Book',
+					language: 'EN'
+				},
+				{
+					translationid: 2,
+					text: 'Kitab',
+					language: 'NP'
+				}
+			]
+		}
+	
+	3. Post Item
+		POST: /items
+		Request body:
+		{
+			itemcode: 'I2',
+			translations: [
+				{
+					text: 'Pen',
+					language: 'EN'
+				},
+				{
+					text: 'Kalam',
+					language: 'NP'
+				}
+			]
+		}
+	
+	4. Update Item
+		PUT: /items/2
+		Request body:
+		{
+			itemcode: 'I2',
+			translations: [
+				{
+					text: 'Ink Pen',
+					language: 'EN'
+				},
+				{
+					text: 'Kalam',
+					language: 'NP'
+				}
+			]
+		}
+	
+	5. Delete Item
+		DELETE: /items/2
+	
+	6. Import Item
+		POST: /items/import
+		Request body: 
+			Excel file:
+				ItemCode EN 	NP
+				I3		 Watch	Ghadi
+		
+	7. Export Item
+		GET: /items/export
+		Response:
+			Excel file:
+				ItemCode EN 	NP
+				I3		 Watch	Ghadi

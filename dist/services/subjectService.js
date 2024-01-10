@@ -14,24 +14,65 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const subjectModel_1 = __importDefault(require("../models/subjectModel"));
+const ChapterModel_1 = __importDefault(require("../models/ChapterModel"));
 class SubjectService {
-    //  to get all students
-    getAllSubjects() {
+    //  to get all subjects
+    getListOfSubjects(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield subjectModel_1.default.findAll({
+            const { pageSize, page, search, orderBy, orderDir } = queryParams;
+            const offset = (page - 1) * pageSize;
+            // const sql= " SELECT * FROM students  WHERE student_name LIKE '%Ram%' ORDER BY student_id ASC LIMIT '10' OFFSET 0;";
+            // whenver you want to inject sequelize property then make the use of {}
+            const subjects = yield subjectModel_1.default.findAndCountAll({
+                limit: pageSize,
+                offset: offset,
+                attributes: ['guid', 'subject_name'],
                 where: {
+                    subject_name: {
+                        [sequelize_1.Op.iLike]: `%${search}%`
+                    },
                     datedeleted: {
                         [sequelize_1.Op.is]: (0, sequelize_1.literal)('null')
                     }
-                }
+                },
+                order: [[orderBy, orderDir]]
             });
+            const totalPages = Math.ceil(subjects.count / pageSize);
+            const result = {
+                //   pageSize,
+                //   page,
+                //   totalPages,
+                subjects: subjects.rows
+            };
+            return result;
         });
     }
     //  to create subject
-    createSubject(subject) {
+    createSubject(subject, next) {
         return __awaiter(this, void 0, void 0, function* () {
+            const checkSubject = yield subjectModel_1.default.count({
+                where: {
+                    subject_name: subject.subject_name,
+                }
+            });
+            if (checkSubject > 0) {
+                next(Error("subject with that name already exists"));
+            }
             return yield subjectModel_1.default.create(subject);
-            // whatever the name of the column in database it should be the same 
+        });
+    }
+    //  to create chapters;
+    createChapter(chapter) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // const checkSubject = await SubjectModel.count({
+            //     where:{
+            //         subject_name:subject.subject_name,
+            //     }
+            // });
+            //     if(checkSubject >0){
+            //         next(Error("subject with that name already exists"));
+            //     }
+            return yield ChapterModel_1.default.create(chapter);
         });
     }
     //  to delete subjects
@@ -43,16 +84,31 @@ class SubjectService {
                         guid: guid
                     }
                 });
-                // alterntively I can do this too.
-                // const result = await SubjectModel.destroy({
-                //     where:{
-                //         subject_id:subjectId
-                //     }
-                // });
                 if (!subject) {
                     return false;
                 }
-                yield subject.update({ datedeleted: (0, sequelize_1.literal)('NULL') });
+                yield subject.update({ datedeleted: new Date() });
+                return true;
+            }
+            catch (error) {
+                console.log(error);
+                return false;
+            }
+        });
+    }
+    // to hard delete subjects;
+    hardDeleteSubject(guid) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const subject = yield subjectModel_1.default.findOne({
+                    where: {
+                        guid: guid
+                    }
+                });
+                if (!subject) {
+                    return false;
+                }
+                yield subject.destroy();
                 return true;
             }
             catch (error) {
@@ -83,5 +139,27 @@ class SubjectService {
             }
         });
     }
+    // get subject by id
+    getSubjectById(guid) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const subject = yield subjectModel_1.default.findOne({
+                    attributes: ['subject_id', 'subject_name'],
+                    where: {
+                        guid: guid
+                    }
+                });
+                if (!subject) {
+                    throw Error('Subject not found');
+                }
+                return subject;
+            }
+            catch (error) {
+                console.log(error);
+                return false;
+            }
+        });
+    }
 }
 exports.default = new SubjectService();
+//# sourceMappingURL=subjectService.js.map

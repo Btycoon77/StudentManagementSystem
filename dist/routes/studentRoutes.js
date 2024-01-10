@@ -5,26 +5,33 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const studentController_1 = __importDefault(require("../controller/studentController"));
-const BridgeService_1 = __importDefault(require("../services/BridgeService"));
 const bridgeController_1 = __importDefault(require("../controller/bridgeController"));
-const functions_1 = __importDefault(require("../sqlfunctions/functions"));
 const studentRouter = (0, express_1.Router)();
-studentRouter.put('/updateStudent/:guid', studentController_1.default.updateStudent);
-studentRouter.get('/getAllStudents', studentController_1.default.getAllStudents);
-studentRouter.post('/createStudent', studentController_1.default.createStudent);
-//  for dbfunctions route 
-studentRouter.post('/createStudentFromDb', functions_1.default.registerStudent);
+studentRouter.put('/students/:guid', studentController_1.default.updateStudent);
+// creating student
+studentRouter.post('/students', studentController_1.default.createStudent);
+// route for getting list of students;
+studentRouter.get('/students', studentController_1.default.getListOfStudents);
 studentRouter.delete('/deleteStudent/:guid', studentController_1.default.deleteStudent);
+//  route for getting student by id;
+studentRouter.get('/students/:guid', bridgeController_1.default.getStudentByIdFromDB);
+// soft deleting the student 
+studentRouter.delete('/students/:guid', studentController_1.default.deleteStudent);
+// hard deleting the student;
+studentRouter.delete('/hardDeleteStudent/:guid', studentController_1.default.hardDeleteStudent);
 //  route for choosing the subject;
-studentRouter.post('/chooseSubjects/:student_id', BridgeService_1.default.chooseSubjects);
-//  route for choosing specific students;
-studentRouter.get('/getStudentWithSubjects/:student_id', BridgeService_1.default.getOneStudentsWithSubjects);
+studentRouter.post('/students/:StudentId', bridgeController_1.default.marksObtained);
+// studentRouter.post('/choose/:guid',bridgeController.assignSubjects);
+//  route for getting all student with subjects
 studentRouter.get('/getStudentWithSubjects', bridgeController_1.default.getStudentsWithSubjects);
-// route for student pagination;
-studentRouter.get('/studentPagination', studentController_1.default.getPaginatedStudents);
-// route for db function pagination;
+// route for db function pagination; only student data || no subject
 studentRouter.get('/studentPaginationDb', studentController_1.default.getDBfunctionPagination);
-//  route for studentSubjectPagination;
+// route for db paginationJoin SQL function
+studentRouter.get('/studentPaginationSQLDb', studentController_1.default.getDBfunctionJoinPagination);
+studentRouter.get('/joinDbFunction', studentController_1.default.getJoinData);
+//  route for studentSubject sql function;
 studentRouter.get('/studentSubjectPagination', bridgeController_1.default.getStudentSubjectPagination);
-// studentRouter.get("/studentPagination'?pageSize=10&page=1&search='Ram'&orderBy='student_id'&orderDir='ASC'",studentController.getPaginatedStudents);
+//  route for generating pdf;
+studentRouter.get('/generatePdf/:StudentId', studentController_1.default.generatePDFController);
 exports.default = studentRouter;
+//# sourceMappingURL=studentRoutes.js.map

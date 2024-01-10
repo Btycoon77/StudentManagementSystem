@@ -9,3 +9,4 @@ exports.connectDb = new sequelize_1.Sequelize({
     host: process.env.DB_HOST || 'localhost',
     dialect: "postgres",
 });
+//# sourceMappingURL=connectDb.js.map

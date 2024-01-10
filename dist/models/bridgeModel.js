@@ -36,7 +36,11 @@ exports.BridgeModel = connectDb_1.connectDb.define("studentsubjects", {
             model: "students",
             key: "student_id"
         },
+    },
+    marksobtained: {
+        type: sequelize_1.DataTypes.INTEGER,
     }
 }, { freezeTableName: true, timestamps: false });
 // BridgeModel.sync({alter:true});
 // BridgeModel.belongsTo(StudentModel)
+//# sourceMappingURL=bridgeModel.js.map
