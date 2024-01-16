@@ -1,10 +1,11 @@
+import { Router } from "express";
+import translationController from "../controller/translationController";
 
-class TranslationService{
+const translationRouter = Router();
 
-    async createItem(data:any):Promise<any>{
-        
-    }
+translationRouter.post('/items/imports',translationController.importExcelData1);
 
-}
+translationRouter.get('/items/export',translationController.exportDataToDb);
 
-export default new TranslationService();
+
+export default translationRouter;

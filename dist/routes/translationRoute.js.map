@@ -1,0 +1,1 @@
+{"version":3,"file":"translationRoute.js","sourceRoot":"","sources":["../../routes/translationRoute.ts"],"names":[],"mappings":";;;;;AAAA,qCAAiC;AACjC,gGAAwE;AAExE,MAAM,iBAAiB,GAAG,IAAA,gBAAM,GAAE,CAAC;AAEnC,iBAAiB,CAAC,IAAI,CAAC,gBAAgB,EAAC,+BAAqB,CAAC,gBAAgB,CAAC,CAAC;AAEhF,iBAAiB,CAAC,GAAG,CAAC,eAAe,EAAC,+BAAqB,CAAC,cAAc,CAAC,CAAC;AAG5E,kBAAe,iBAAiB,CAAC"}

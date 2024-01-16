@@ -32,3 +32,34 @@ export interface ChapterMap{
     
     Children: ChapterHierarchy[],
   };
+
+  export interface OriginalData {
+    ItemCode: string;
+    EN: string;
+    NP: string;
+  }
+  
+  export interface TransformedData {
+    itemcode: string;
+    translations: Translation[];
+  }
+  
+  export interface Translation {
+    text: string;
+    language: string;
+  }
+
+  export interface Item{
+    itemcode: string;
+    translations: Translation[]
+  }
+
+  export interface Payload{
+    data: Item[]
+  }
+
+  export interface TranslationData {
+    ItemCode: string;
+    Language: string;
+    Text: string;
+}

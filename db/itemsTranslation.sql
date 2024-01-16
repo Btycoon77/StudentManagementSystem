@@ -40,3 +40,9 @@ CREATE TABLE translations (
     text TEXT,
     langu VARCHAR(255) NOT NULL
 );
+
+create table itemTranslations(
+	itemtranslations_id serial primary key,
+	itemid int references items(itemid),
+	translationid int references translations(translationid)
+);

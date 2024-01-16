@@ -8,6 +8,8 @@ import bodyParser from 'body-parser';
 import subjectRouter from "./routes/subjectRoutes";
 import error_exception from "./exception/error_exception";
 import chapterRouter from "./routes/chapterRoutes";
+import translationRouter from "./routes/translationRoute";
+import fileUpload from 'express-fileupload';
 
 
 
@@ -20,13 +22,31 @@ const port = process.env.PORT;
 db();
 
 // middlewares
-app.use(bodyParser.json());
+app.use('/public',express.static(__dirname+'/public'));
+
+app.use(bodyParser.json({
+  limit:'10mb'
+}));
+
+app.use(bodyParser.urlencoded({
+  limit:'50mb',
+  extended:true,
+
+}))
+// use express-fielupload middleware for handling file uploads;
+app.use(fileUpload({
+  useTempFiles:true,
+  tempFileDir:'./public',
+  
+}));
+
 
 
 
 app.use('/api/v1',studentRouter);
 app.use('/api/v1',subjectRouter);
 app.use('/api/v1',chapterRouter);
+app.use('/api/v1',translationRouter);
 
 
 // error middleware

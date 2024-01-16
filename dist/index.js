@@ -11,16 +11,31 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const subjectRoutes_1 = __importDefault(require("./routes/subjectRoutes"));
 const error_exception_1 = __importDefault(require("./exception/error_exception"));
 const chapterRoutes_1 = __importDefault(require("./routes/chapterRoutes"));
+const translationRoute_1 = __importDefault(require("./routes/translationRoute"));
+const express_fileupload_1 = __importDefault(require("express-fileupload"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT;
 //  connect to the database;
 (0, configDb_1.db)();
 // middlewares
-app.use(body_parser_1.default.json());
+app.use('/public', express_1.default.static(__dirname + '/public'));
+app.use(body_parser_1.default.json({
+    limit: '10mb'
+}));
+app.use(body_parser_1.default.urlencoded({
+    limit: '50mb',
+    extended: true,
+}));
+// use express-fielupload middleware for handling file uploads;
+app.use((0, express_fileupload_1.default)({
+    useTempFiles: true,
+    tempFileDir: './public',
+}));
 app.use('/api/v1', studentRoutes_1.default);
 app.use('/api/v1', subjectRoutes_1.default);
 app.use('/api/v1', chapterRoutes_1.default);
+app.use('/api/v1', translationRoute_1.default);
 // error middleware
 app.use(error_exception_1.default);
 // Error handling middleware
