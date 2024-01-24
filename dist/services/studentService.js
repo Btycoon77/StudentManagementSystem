@@ -18,18 +18,13 @@ const sequelize_2 = require("sequelize");
 const connectDb_1 = require("../db/connectDb");
 class StudentService {
     //  to create student
-    createStudent(studentData, next) {
+    createStudent(studentData) {
         return __awaiter(this, void 0, void 0, function* () {
             //  check if student exist;
-            const checkStudent = yield studentModel_1.default.count({
-                where: {
-                    student_name: studentData.student_name,
-                }
-            });
-            if (checkStudent > 0) {
-                next(Error("student with that name already exists"));
-                // throw Error("student with that name already exists");
-            }
+            // if(checkStudent >0){
+            //     next(Error("student with that name already exists"));
+            //     // throw Error("student with that name already exists");
+            // }
             return yield studentModel_1.default.create(studentData);
             // whatever the name of the column in database it should be the same 
         });

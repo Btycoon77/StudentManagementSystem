@@ -81,6 +81,15 @@ export const StudentModel = connectDb.define("students",{
       type: DataTypes.DATE,
       defaultValue:Date.now(),
       
+  },
+  email:{
+    type:DataTypes.STRING,
+    allowNull:false,
+
+  },
+  password:{
+    type:DataTypes.STRING,
+    allowNull:false
   }
 },
 { modelName: 'students',freezeTableName:true,timestamps:false});
@@ -91,7 +100,7 @@ export const StudentModel = connectDb.define("students",{
 
 
 
-StudentModel.sync({alter:true});
+// StudentModel.sync({alter:true});
 
 // to establish one-to-many relations between tables;
 

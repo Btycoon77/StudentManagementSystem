@@ -1,0 +1,72 @@
+openapi: 3.0.0
+info:
+  title: Student Management System API
+  description: All the API for handling students
+  version: 1.0.0
+servers:
+  - url: "http://localhost:3000/api/v1"
+paths:
+  "/students/{guid}":
+    put:
+      summary: Updates the user.
+      tags:
+        - Students
+      parameters:
+        - name: guid
+          in: path
+          required: true
+      requestBody:
+        "200":
+          description: ok.
+        "400":
+          description: The specified user ID is invalid (not a number).
+        "404":
+          description: A user with the specified ID was not found.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                student_name:
+                  type: string
+                age:
+                  type: integer
+        responses: null
+        default:
+          description: Unexpected error
+  /students:
+    get:
+      summary: Getting the user.
+      tags:
+        - Students
+      parameters:
+        - name: pageSize
+          in: query
+          required: true
+        - name: page
+          in: query
+          required: true
+        - name: search
+          in: query
+          required: true
+        - name: orderBy
+          in: query
+          required: true
+        - name: orderDir
+          in: query
+          required: true
+    responses:
+      "200":
+        description: ok.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                StudentId:
+                  type: string
+                StudentName:
+                  type: string
+                Age:
+                  type: integer

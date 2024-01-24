@@ -9,7 +9,7 @@ items
 
 translations
 	translationid primary key,
-	translationcode varchar, // translation_<translationid>
+	translationcode varchar, // item_<itemid>
 	text varchar,
 	language varchar
 

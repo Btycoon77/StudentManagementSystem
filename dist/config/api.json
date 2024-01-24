@@ -1,0 +1,666 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Student Management System API",
+        "description": "All the API for handling students",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000/api/v1"
+        }
+    ],
+    "paths": {
+        "/students/{guid}": {
+            "put": {
+                "summary": "Updates the user.",
+                "tags": [
+                    "Students"
+                ],
+                "parameters": [
+                    {
+                        "name": "guid",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "student_name": {
+                                            "type": "string"
+                                        },
+                                        "age": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Soft deletes the user.",
+                "tags": [
+                    "Students"
+                ],
+                "parameters": [
+                    {
+                        "name": "guid",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "ok."
+                    }
+                }
+            },
+            "get": {
+                "summary": "Gets  the user by id.",
+                "tags": [
+                    "Students"
+                ],
+                "parameters": [
+                    {
+                        "name": "guid",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok."
+                    }
+                }
+            }
+        },
+        "/students": {
+            "get": {
+                "summary": "Getting the user.",
+                "tags": [
+                    "Students"
+                ],
+                "parameters": [
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "orderBy",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "orderDir",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new student.",
+                "tags": ["Students"],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "student_name": {
+                                        "type": "string"
+                                    },
+                                    "age": {
+                                        "type": "integer"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        },
+        "/students/{StudentId}": {
+            "post": {
+                "summary": "Choosing the subjects and setting marks",
+                "tags": [
+                    "Students"
+                ],
+                "parameters": [
+                    {
+                        "name": "StudentId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok."
+                    }
+                }
+            }
+        },
+        "subjects/:guid": {
+            "put": {
+                "summary": "Updating the subjects",
+                "tags": [
+                    "Subjects"
+                ],
+                "parameters": [
+                    {
+                        "name": "guid",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "updated succesfully"
+                    }
+                }
+            },
+            "get": {
+                "summary": "Getting subjects by id",
+                "tags": [
+                    "Subjects"
+                ],
+                "parameters": [
+                    {
+                        "name": "guid",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Soft deleting the subjects",
+                "tags": [
+                    "Subjects"
+                ],
+                "parameters": [
+                    {
+                        "name": "guid",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted succesfully"
+                    }
+                }
+            }
+        },
+        "/subjects": {
+            "post": {
+                "summary": "Creating the subjects",
+                "tags": [
+                    "Subjects"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Created Succesfully"
+                    }
+                }
+            },
+            "get": {
+                "summary": "Getting all the subjects (subject pagination) auth middleware use Bearer [token]",
+                "tags": [
+                    "Subjects"
+                ],
+                "parameters": [
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "orderBy",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "orderDir",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Created Succesfully"
+                    }
+                }
+            }
+        },
+        "/subjects/chapters/bulk": {
+            "post": {
+                "summary": "Inserting the chapter in bulk of specific subject",
+                "tags": [
+                    "Chapters"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Inserted succesfully"
+                    }
+                }
+            }
+        },
+        "/subject/chapters": {
+            "get": {
+                "summary": "Getting chapter pagination",
+                "tags": [
+                    "Chapters"
+                ],
+                "parameters": [
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "orderBy",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "orderDir",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Chapters retreived succesfully"
+                    }
+                }
+            }
+        },
+        "/subjects/:guid/chapters": {
+            "get": {
+                "summary": "Getting all the chapters of specific subjects",
+                "tags": [
+                    "Chapters"
+                ],
+                "parameters": [
+                    {
+                        "name": "guid",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Chapters retreived succesfully"
+                    }
+                }
+            }
+        },
+        "/items/import": {
+            "post": {
+                "summary": "Importing the excel file and inserting to db",
+                "tags": ["ItemTranslation"],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "fileName": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Excel file uploaded to db"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        },
+        "/items/export": {
+            "get": {
+                "summary": "Exporting data from db into excel format",
+                "tags": [
+                    "ItemTranslation"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Items exported succesfully"
+                    }
+                }
+            }
+        },
+        "/items": {
+            "post": {
+                "summary": "Creating items",
+                "tags": [
+                    "ItemTranslation"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "ItemCode": {
+                                        "type": "string"
+                                    },
+                                    "translations": {
+                                        "type": "object",
+                                        "properties": {
+                                            "text": {
+                                                "type": "string"
+                                            },
+                                            "language": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Items created succesfully"
+                    }
+                }
+            },
+            "get": {
+                "summary": "Retrieving all the items",
+                "tags": [
+                    "ItemTranslation"
+                ],
+                "parameters": [
+                    {
+                        "name": "Language",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Items retrieved succesfully"
+                    }
+                }
+            }
+        },
+        "/items/{itemcode}": {
+            "put": {
+                "summary": "Updating items",
+                "tags": [
+                    "ItemTranslation"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "ItemCode": {
+                                        "type": "string"
+                                    },
+                                    "translations": {
+                                        "type": "object",
+                                        "properties": {
+                                            "text": {
+                                                "type": "string"
+                                            },
+                                            "language": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Items updated succesfully"
+                    }
+                }
+            }
+        },
+        "/items/{ItemId}": {
+            "get": {
+                "summary": "Retrieving specific  item",
+                "tags": [
+                    "ItemTranslation"
+                ],
+                "parameters": [
+                    {
+                        "name": "ItemId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Item retrieved succesfully"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Soft deleting specific item",
+                "tags": [
+                    "ItemTranslation"
+                ],
+                "parameters": [
+                    {
+                        "name": "ItemId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Item deleted succesfully"
+                    }
+                }
+            }
+        },
+        "/student/login": {
+            "post": {
+                "summary": "Login for students",
+                "tags": ["Students"],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "token": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication error - Invalid credentials"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -12,10 +12,12 @@ const subjectRoutes_1 = __importDefault(require("./routes/subjectRoutes"));
 const error_exception_1 = __importDefault(require("./exception/error_exception"));
 const chapterRoutes_1 = __importDefault(require("./routes/chapterRoutes"));
 const translationRoute_1 = __importDefault(require("./routes/translationRoute"));
-const express_fileupload_1 = __importDefault(require("express-fileupload"));
+const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
+const api_json_1 = __importDefault(require("./config/api.json"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT;
+// load the yaml file for swagger
 //  connect to the database;
 (0, configDb_1.db)();
 // middlewares
@@ -28,10 +30,13 @@ app.use(body_parser_1.default.urlencoded({
     extended: true,
 }));
 // use express-fielupload middleware for handling file uploads;
-app.use((0, express_fileupload_1.default)({
-    useTempFiles: true,
-    tempFileDir: './public',
-}));
+// app.use(fileUpload({
+//   useTempFiles:true,
+//   tempFileDir:'./public',
+// }));
+// swagger route
+app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(api_json_1.default));
+// app.use('/api-docs', swaggerui.serve, swaggerui.setup(specs));
 app.use('/api/v1', studentRoutes_1.default);
 app.use('/api/v1', subjectRoutes_1.default);
 app.use('/api/v1', chapterRoutes_1.default);

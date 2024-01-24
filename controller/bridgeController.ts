@@ -3,10 +3,9 @@ import BridgeService from "../services/BridgeService";
 import StudentModel from "../models/studentModel";
 import { BridgeModel } from "../models/bridgeModel";
 import SubjectModel from "../models/subjectModel";
-import { Op, QueryTypes, Sequelize, literal } from "sequelize";
+import { Op, QueryTypes, literal } from "sequelize";
 import { connectDb } from "../db/connectDb";
 import pdfGenerate from "../utils/pdfHelper";
-import StudentInfo from "../utils/StudentInfo";
 
 
 class BridgeController{

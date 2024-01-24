@@ -50,6 +50,31 @@ class TranslationService {
             console.log(`Excel file generated at :${outputPath}`);
         });
     }
+    generateExcel1(payload) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const workbook = xlsx.utils.book_new();
+            const worksheet = xlsx.utils.json_to_sheet(payload.reduce((result, item) => {
+                const translations = item.translations.map((translation) => ({
+                    ItemCode: item.itemcode,
+                    Language: translation.language,
+                    Text: translation.text
+                }));
+                return result.concat(translations);
+            }, []));
+            xlsx.utils.book_append_sheet(workbook, worksheet, 'Translations');
+            // Create a Blob containing the workbook data
+            const blob = xlsx.write(workbook, { bookType: 'xlsx', type: 'blob' });
+            // Create a download link
+            const downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(blob);
+            downloadLink.download = 'output.xlsx'; // You can set the default file name here
+            // Append the link to the body and trigger the click event
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            // Remove the link from the body
+            document.body.removeChild(downloadLink);
+        });
+    }
 }
 exports.default = new TranslationService();
 //# sourceMappingURL=translationService.js.map

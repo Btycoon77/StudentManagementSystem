@@ -9,20 +9,14 @@ class StudentService{
    
     
     //  to create student
-    async createStudent(studentData:any,next:NextFunction):Promise<any>{
+    async createStudent(studentData:any,):Promise<any>{
         //  check if student exist;
 
-        const checkStudent = await StudentModel.count({
-          
-            where:{
-                student_name:studentData.student_name,
-            
-            }
-        });
-            if(checkStudent >0){
-                next(Error("student with that name already exists"));
-                // throw Error("student with that name already exists");
-            }
+      
+            // if(checkStudent >0){
+            //     next(Error("student with that name already exists"));
+            //     // throw Error("student with that name already exists");
+            // }
             return await StudentModel.create(studentData);
             // whatever the name of the column in database it should be the same 
     }

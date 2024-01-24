@@ -8,6 +8,7 @@ const studentRouter = Router();
 
 studentRouter.put('/students/:guid',studentController.updateStudent);
 
+ 
 // creating student
 
 studentRouter.post('/students',studentController.createStudent);
@@ -15,9 +16,10 @@ studentRouter.post('/students',studentController.createStudent);
 // route for getting list of students;
 
 studentRouter.get('/students',studentController.getListOfStudents);
+
 studentRouter.delete('/deleteStudent/:guid',studentController.deleteStudent);
 
-//  route for getting student by id;
+//  route for getting student by id with their subject and percentage
 studentRouter.get('/students/:guid',bridgeController.getStudentByIdFromDB);
 
 // soft deleting the student 
@@ -32,7 +34,9 @@ studentRouter.post('/students/:StudentId',bridgeController.marksObtained);
 
 // studentRouter.post('/choose/:guid',bridgeController.assignSubjects);
 
+// login route
 
+studentRouter.post('/student/login',studentController.loginController);
 
 //  route for getting all student with subjects
 studentRouter.get('/getStudentWithSubjects',bridgeController.getStudentsWithSubjects);

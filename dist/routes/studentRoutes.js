@@ -13,7 +13,7 @@ studentRouter.post('/students', studentController_1.default.createStudent);
 // route for getting list of students;
 studentRouter.get('/students', studentController_1.default.getListOfStudents);
 studentRouter.delete('/deleteStudent/:guid', studentController_1.default.deleteStudent);
-//  route for getting student by id;
+//  route for getting student by id with their subject and percentage
 studentRouter.get('/students/:guid', bridgeController_1.default.getStudentByIdFromDB);
 // soft deleting the student 
 studentRouter.delete('/students/:guid', studentController_1.default.deleteStudent);
@@ -22,6 +22,8 @@ studentRouter.delete('/hardDeleteStudent/:guid', studentController_1.default.har
 //  route for choosing the subject;
 studentRouter.post('/students/:StudentId', bridgeController_1.default.marksObtained);
 // studentRouter.post('/choose/:guid',bridgeController.assignSubjects);
+// login route
+studentRouter.post('/student/login', studentController_1.default.loginController);
 //  route for getting all student with subjects
 studentRouter.get('/getStudentWithSubjects', bridgeController_1.default.getStudentsWithSubjects);
 // route for db function pagination; only student data || no subject

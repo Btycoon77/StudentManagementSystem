@@ -39,6 +39,8 @@ const connectDb_1 = require("../db/connectDb");
 const sequelize_1 = require("sequelize");
 const xlsx = __importStar(require("xlsx"));
 const translationService_1 = __importDefault(require("../services/translationService"));
+const path_1 = __importDefault(require("path"));
+const fs_1 = __importDefault(require("fs"));
 class TranslationController {
     createItem(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -54,6 +56,7 @@ class TranslationController {
             }
         });
     }
+    // using static path (Taking file from the local storage )
     importExcelData1(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -72,10 +75,14 @@ class TranslationController {
                 }
                 //  transform the data in a specific format
                 let result = transformData(data);
-                console.log(result);
+                //   console.log(result);
+                let transformedObject = {
+                    data: result
+                };
+                let finalObject = JSON.stringify(transformedObject);
                 const importData = yield connectDb_1.connectDb.query(`select public.insert_translations_from_data(:data)`, {
                     replacements: {
-                        data: result,
+                        data: finalObject,
                     },
                     type: sequelize_1.QueryTypes.SELECT
                 });
@@ -85,7 +92,7 @@ class TranslationController {
                 // res.status(200).json("Succesfully uploaded the excel file");
                 res.status(200).json({
                     result: "data succesfully pushed ",
-                    data: result
+                    data: finalObject
                 });
             }
             catch (error) {
@@ -107,15 +114,202 @@ class TranslationController {
                     type: sequelize_1.QueryTypes.SELECT
                 });
                 const result = getData.map((item) => item.get_all_items[0]);
-                const excelSheet = yield translationService_1.default.generateExcel(result, 'public/translationData.xlsx');
-                res.status(200).json({
-                    result: "Excel file generated succesfully"
+                const excelSheet = yield translationService_1.default.generateExcel(result, 'public/export/translationData.xlsx');
+                res.download('public/export/translationData.xlsx', function (err) {
+                    if (err) {
+                        console.log(err);
+                    }
                 });
+                //  delete the file 
+                // fs.unlinkSync("public/export/translationData.xlsx");        
             }
             catch (error) {
                 console.log(error);
                 res.status(500).json({
                     error: error
+                });
+            }
+        });
+    }
+    // using multer 
+    importExcelData(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // Access the uploaded file from req.file
+                const uploadFile = req.file;
+                console.log("file properties", req.file);
+                if (!uploadFile) {
+                    return res.status(400).json({
+                        error: 'No file uploaded or invalid file format',
+                    });
+                }
+                console.log('File uploaded successfully');
+                console.log('File data length', uploadFile.size);
+                // Parse excel file using xlsx
+                console.log("path is ", `public/${uploadFile.originalname}`);
+                // console.log("workbook is",workbook);
+                console.log("data is ", uploadFile.buffer);
+                const data = [];
+                // const sheettNames = workbook.SheetNames;
+                // console.log("sheet names",sheettNames);
+                const readData = fs_1.default.readFileSync(uploadFile.path);
+                const writeData = fs_1.default.writeFileSync('public/ram/Translation.xlsx', readData);
+                const workbook = xlsx.readFile('public/ram/Translation.xlsx');
+                const excelData = xlsx.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+                data.push(...excelData);
+                // workbook.SheetNames.forEach((sheetName) => {
+                //     const sheet = workbook.Sheets[workbook.SheetName[0]]; 
+                //     const sheetData = xlsx.utils.sheet_to_json(sheet) as OriginalData[];
+                //     data.push(...sheetData);
+                // });
+                // Transform the data in a specific format
+                const result = transformData(data);
+                console.log(result);
+                let transformedObject = {
+                    data: result
+                };
+                let finalObject = JSON.stringify(transformedObject);
+                const importData = yield connectDb_1.connectDb.query(`select public.insert_translations_from_data(:data)`, {
+                    replacements: {
+                        data: finalObject,
+                    },
+                    type: sequelize_1.QueryTypes.SELECT
+                });
+                if (!importData) {
+                    res.status(400).json("could not import the file");
+                }
+                // res.status(200).json("Succesfully uploaded the excel file");
+                res.status(200).json({
+                    result: "data succesfully pushed ",
+                    data: finalObject
+                });
+            }
+            catch (error) {
+                console.log(error);
+                res.status(500).json({
+                    error: error,
+                });
+            }
+        });
+    }
+    //  using multer + parsing excel file + handling concurrent request
+    importExcelData3(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // Access the uploaded file from req.file
+                const uploadFile = req.file;
+                console.log("file props", uploadFile);
+                if (!uploadFile) {
+                    return res.status(400).json({
+                        error: 'No file uploaded or invalid file format',
+                    });
+                }
+                console.log('File uploaded successfully');
+                console.log('File data length', uploadFile.size);
+                // Generate a unique filename
+                const uniqueFilename = `${Date.now()}_${uploadFile.originalname}`;
+                // Create the file path
+                const filePath = path_1.default.join('public', uniqueFilename);
+                console.log("upload file path", uploadFile.path);
+                // const readData = fs.readFileSync(uploadFile.buffer);
+                // const readData = fs.readFileSync(uploadFile.path);
+                // Write the uploaded file to the local storage
+                // fs.writeFileSync(filePath, readData);
+                // Parse excel file using xlsx
+                // const workbook = xlsx.readFile(filePath);
+                // read() function is used to read buffer
+                // but readFile() is  used to read path;
+                const workbook = xlsx.read(uploadFile.buffer);
+                const data = [];
+                workbook.SheetNames.forEach((sheetName) => {
+                    const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                    data.push(...sheetData);
+                });
+                // Transform the data in a specific format
+                const result = transformData(data);
+                console.log(result);
+                const transformedObject = {
+                    data: result,
+                };
+                const finalObject = JSON.stringify(transformedObject);
+                // Delete the uploaded file
+                // fs.unlinkSync(filePath);
+                // unlink the file in the public dir
+                // fs.unlinkSync(`public/${req.file?.originalname}`)
+                const importData = yield connectDb_1.connectDb.query(`select public.insert_translations_from_data(:data)`, {
+                    replacements: {
+                        data: finalObject,
+                    },
+                    type: sequelize_1.QueryTypes.SELECT,
+                });
+                if (!importData) {
+                    res.status(400).json('Could not import the file');
+                }
+                ``;
+                res.status(200).json({
+                    result: 'Data successfully pushed ',
+                    data: finalObject,
+                });
+            }
+            catch (error) {
+                console.log(error);
+                res.status(500).json({
+                    error: error,
+                });
+            }
+        });
+    }
+    // using express-file upload;
+    importExcelData2(req, res) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // Check if a file is uploaded
+                const uploadedFile = (_a = req.files) === null || _a === void 0 ? void 0 : _a.fileName;
+                if (!uploadedFile) {
+                    return res.status(400).json({
+                        error: 'No file uploaded',
+                    });
+                }
+                // Parse the Excel file
+                const workbook = xlsx.read(uploadedFile.data);
+                console.log("workbook is", workbook);
+                const data = [];
+                workbook.SheetNames.forEach((sheetName) => {
+                    const sheet = workbook.Sheets[sheetName];
+                    if (!sheet) {
+                        console.error(`Sheet '${sheetName}' not found in the workbook.`);
+                        return;
+                    }
+                    const sheetData = xlsx.utils.sheet_to_json(sheet);
+                    data.push(...sheetData);
+                });
+                //  transform the data in a specific format
+                let result = transformData(data);
+                console.log("the transformed data is ", result);
+                let transformedObject = {
+                    data: result
+                };
+                let finalObject = JSON.stringify(transformedObject);
+                const importData = yield connectDb_1.connectDb.query(`select public.insert_translations_from_data(:data)`, {
+                    replacements: {
+                        data: finalObject,
+                    },
+                    type: sequelize_1.QueryTypes.SELECT
+                });
+                if (!importData) {
+                    res.status(400).json("could not import the file");
+                }
+                // res.status(200).json("Succesfully uploaded the excel file");
+                res.status(200).json({
+                    result: "data succesfully pushed ",
+                    data: finalObject
+                });
+            }
+            catch (error) {
+                console.error('Error:', error);
+                res.status(500).json({
+                    error: 'Internal Server Error',
                 });
             }
         });

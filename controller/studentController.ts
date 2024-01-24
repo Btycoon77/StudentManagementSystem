@@ -3,33 +3,100 @@ import studentService from "../services/studentService";
 import generatePdf from "../services/generatePdf";
 import fs from 'fs';
 import { connectDb } from "../db/connectDb";
-import { QueryTypes } from "sequelize";
+import { QueryTypes, where } from "sequelize";
+import StudentModel from "../models/studentModel";
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken';
 
 class StudentController{
     
     
     //  create student
-    async createStudent(req:Request,res:Response,next:NextFunction):Promise<void>{
-        const studData = req.body;
+    async createStudent(req:Request,res:Response,next:NextFunction):Promise<any>{
+        
         const studentData = {
             student_name: req.body.student_name,
             age: req.body.age,
-            datedeleted: null
+            email: req.body.email,
+            password:req.body.password
 
         };
         
         try {
-            const student = await studentService.createStudent(studData,next);
-            res.status(201).json({
-              
-                StudentId:student.guid,
-                StudentName: student.student_name,
-                Age: student.age
+
+            const existingStudent = await StudentModel.findOne({
+                where:{
+                    email: studentData.email
+                }
             });
+
+            if(existingStudent){
+                //  if you dont put a return here then code will execute to the next line else code stops at this point
+               return res.status(409).json({
+                    message:"User already exists"
+                });
+                
+            }
+            const password  = req.body.password;
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password,salt);
+            console.log(hashedPassword);
+            // req.body.password = hashedPassword;
+            const student = await studentService.createStudent({
+                student_name:studentData.student_name,
+                age: studentData.age,
+                password: hashedPassword,
+                email:studentData.email
+            });
+            res.status(201).json({
+                data:student
+            }            );
         } catch (error) {
             console.log(error);
             res.status(500).json({
                 success:false,
+                error:"Internal server error"
+            })
+        }
+    }
+
+    // login handler
+    async loginController(req:Request,res:Response):Promise<any>{
+        try {
+            const student = await StudentModel.findOne({
+                where:{
+                    email: req.body.email
+                }
+            });
+
+            if(!student){
+                res.status(400).json({
+                    message:'User not found'
+                })
+            }
+            // console.log(student)
+            // res.status(200).json(student);
+            console.log("password",student?.dataValues.password);
+            const isMatched = await bcrypt.compare(req.body.password,student?.dataValues.password);
+
+
+            if(!isMatched){
+                res.status(409).json({
+                    message:"Invalid email or password"
+                });
+            }
+            const guid = student?.dataValues.guid ;
+            // const JWT_SECRET ='bc6e5b4d-fc7c-425b-b580-afcb08d1e88a';
+          
+            const token =  jwt.sign(guid,process.env.JWT_SECRET as string);
+            console.log(token);
+
+            res.status(200).json({
+                message:"Login success",
+                token:token
+            })
+        } catch (error) {
+            res.status(500).json({
                 error:"Internal server error"
             })
         }

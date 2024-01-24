@@ -15,28 +15,89 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const studentService_1 = __importDefault(require("../services/studentService"));
 const generatePdf_1 = __importDefault(require("../services/generatePdf"));
 const fs_1 = __importDefault(require("fs"));
+const studentModel_1 = __importDefault(require("../models/studentModel"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 class StudentController {
     //  create student
     createStudent(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const studData = req.body;
             const studentData = {
                 student_name: req.body.student_name,
                 age: req.body.age,
-                datedeleted: null
+                email: req.body.email,
+                password: req.body.password
             };
             try {
-                const student = yield studentService_1.default.createStudent(studData, next);
+                const existingStudent = yield studentModel_1.default.findOne({
+                    where: {
+                        email: studentData.email
+                    }
+                });
+                if (existingStudent) {
+                    //  if you dont put a return here then code will execute to the next line else code stops at this point
+                    return res.status(409).json({
+                        message: "User already exists"
+                    });
+                }
+                const password = req.body.password;
+                const salt = yield bcryptjs_1.default.genSalt(10);
+                const hashedPassword = yield bcryptjs_1.default.hash(password, salt);
+                console.log(hashedPassword);
+                // req.body.password = hashedPassword;
+                const student = yield studentService_1.default.createStudent({
+                    student_name: studentData.student_name,
+                    age: studentData.age,
+                    password: hashedPassword,
+                    email: studentData.email
+                });
                 res.status(201).json({
-                    StudentId: student.guid,
-                    StudentName: student.student_name,
-                    Age: student.age
+                    data: student
                 });
             }
             catch (error) {
                 console.log(error);
                 res.status(500).json({
                     success: false,
+                    error: "Internal server error"
+                });
+            }
+        });
+    }
+    // login handler
+    loginController(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const student = yield studentModel_1.default.findOne({
+                    where: {
+                        email: req.body.email
+                    }
+                });
+                if (!student) {
+                    res.status(400).json({
+                        message: 'User not found'
+                    });
+                }
+                // console.log(student)
+                // res.status(200).json(student);
+                console.log("password", student === null || student === void 0 ? void 0 : student.dataValues.password);
+                const isMatched = yield bcryptjs_1.default.compare(req.body.password, student === null || student === void 0 ? void 0 : student.dataValues.password);
+                if (!isMatched) {
+                    res.status(409).json({
+                        message: "Invalid email or password"
+                    });
+                }
+                const guid = student === null || student === void 0 ? void 0 : student.dataValues.guid;
+                // const JWT_SECRET ='bc6e5b4d-fc7c-425b-b580-afcb08d1e88a';
+                const token = jsonwebtoken_1.default.sign(guid, process.env.JWT_SECRET);
+                console.log(token);
+                res.status(200).json({
+                    message: "Login success",
+                    token: token
+                });
+            }
+            catch (error) {
+                res.status(500).json({
                     error: "Internal server error"
                 });
             }

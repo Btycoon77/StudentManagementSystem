@@ -64,9 +64,17 @@ exports.StudentModel = connectDb_1.connectDb.define("students", {
     datecreated: {
         type: sequelize_1.DataTypes.DATE,
         defaultValue: Date.now(),
+    },
+    email: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
+    },
+    password: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: false
     }
 }, { modelName: 'students', freezeTableName: true, timestamps: false });
-exports.StudentModel.sync({ alter: true });
+// StudentModel.sync({alter:true});
 // to establish one-to-many relations between tables;
 // to establish many-to-many relations between the tables I must use belongsToMany();
 exports.StudentModel.belongsToMany(subjectModel_1.default, { through: bridgeModel_1.BridgeModel, foreignKey: 'student_id' });
