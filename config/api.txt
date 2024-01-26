@@ -1,0 +1,19 @@
+things to remember;
+
+you have to use these in order to use auth middleware;
+
+
+=> must be placed inside get
+"security":[{"bearerAuth":[]}],
+
+=> must use components outside path,
+
+"components":{
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }

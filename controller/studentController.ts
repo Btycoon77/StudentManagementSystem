@@ -2,8 +2,6 @@ import { NextFunction, Request,Response, query } from "express";
 import studentService from "../services/studentService";
 import generatePdf from "../services/generatePdf";
 import fs from 'fs';
-import { connectDb } from "../db/connectDb";
-import { QueryTypes, where } from "sequelize";
 import StudentModel from "../models/studentModel";
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken';
@@ -41,7 +39,7 @@ class StudentController{
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(password,salt);
             console.log(hashedPassword);
-            // req.body.password = hashedPassword;
+            
             const student = await studentService.createStudent({
                 student_name:studentData.student_name,
                 age: studentData.age,
@@ -86,7 +84,7 @@ class StudentController{
                 });
             }
             const guid = student?.dataValues.guid ;
-            // const JWT_SECRET ='bc6e5b4d-fc7c-425b-b580-afcb08d1e88a';
+           
           
             const token =  jwt.sign(guid,process.env.JWT_SECRET as string);
             console.log(token);

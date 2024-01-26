@@ -44,7 +44,6 @@ class StudentController {
                 const salt = yield bcryptjs_1.default.genSalt(10);
                 const hashedPassword = yield bcryptjs_1.default.hash(password, salt);
                 console.log(hashedPassword);
-                // req.body.password = hashedPassword;
                 const student = yield studentService_1.default.createStudent({
                     student_name: studentData.student_name,
                     age: studentData.age,
@@ -88,7 +87,6 @@ class StudentController {
                     });
                 }
                 const guid = student === null || student === void 0 ? void 0 : student.dataValues.guid;
-                // const JWT_SECRET ='bc6e5b4d-fc7c-425b-b580-afcb08d1e88a';
                 const token = jsonwebtoken_1.default.sign(guid, process.env.JWT_SECRET);
                 console.log(token);
                 res.status(200).json({

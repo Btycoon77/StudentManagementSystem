@@ -21,8 +21,8 @@ begin
 -- 		check if datedeleted is NULL for the old record
 		IF NEW.datedeleted IS  NULL THEN
 -- 		 we need old data to be inserted into the studenthistory table so we use OLD.column_name;
-			INSERT INTO studenthistory(student_id,student_name,age,datecreated,datedeleted,operation)
-			VALUES(OLD.student_id,OLD.student_name,OLD.age,OLD.datecreated,NULL,'U');
+			INSERT INTO studenthistory(student_id,student_name,age,datecreated,datedeleted,email,password,operation)
+			VALUES(OLD.student_id,OLD.student_name,OLD.age,OLD.datecreated,NULL,old.email,old.password,'U');
 			
 		ELSE
 -- 			insert a new record for the soft deleted ones

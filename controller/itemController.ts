@@ -130,7 +130,7 @@ class ItemController{
     async updateItem(req:Request,res:Response):Promise<any>{
         try {
            
-            const itemCode = req.body.ItemCode;
+            const itemCode = req.params.itemcode;
             const translationsData = JSON.stringify(req.body.translations);
 
             

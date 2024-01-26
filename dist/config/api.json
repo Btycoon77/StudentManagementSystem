@@ -203,7 +203,7 @@
                 }
             }
         },
-        "subjects/:guid": {
+        "/subjects/{guid}": {
             "put": {
                 "summary": "Updating the subjects",
                 "tags": [
@@ -274,6 +274,24 @@
                 "tags": [
                     "Subjects"
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "subject_name": {
+                                        "type": "string"
+                                    },
+                                    "TotalMarks": {
+                                        "type": "integer"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "Created Succesfully"
@@ -285,20 +303,13 @@
                 "tags": [
                     "Subjects"
                 ],
+                "security": [{ "bearerAuth": [] }],
                 "parameters": [
                     {
                         "name": "pageSize",
                         "in": "query",
                         "schema": {
                             "type": "integer"
-                        },
-                        "required": true
-                    },
-                    {
-                        "name": "token",
-                        "in": "header",
-                        "schema": {
-                            "type": "string"
                         },
                         "required": true
                     },
@@ -406,7 +417,7 @@
                 }
             }
         },
-        "/subjects/:guid/chapters": {
+        "/subjects/{subjectId}/chapters": {
             "get": {
                 "summary": "Getting all the chapters of specific subjects",
                 "tags": [
@@ -414,7 +425,7 @@
                 ],
                 "parameters": [
                     {
-                        "name": "guid",
+                        "name": "subjectId",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -538,6 +549,16 @@
                 "tags": [
                     "ItemTranslation"
                 ],
+                "parameters": [
+                    {
+                        "name": "itemcode",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -545,9 +566,6 @@
                             "schema": {
                                 "type": "object",
                                 "properties": {
-                                    "ItemCode": {
-                                        "type": "string"
-                                    },
                                     "translations": {
                                         "type": "object",
                                         "properties": {
@@ -660,6 +678,15 @@
                         "description": "Internal Server Error"
                     }
                 }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
             }
         }
     }

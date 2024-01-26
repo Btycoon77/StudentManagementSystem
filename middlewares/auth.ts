@@ -5,8 +5,7 @@ import jwt from 'jsonwebtoken';
 const authMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const token = req.headers['authorization']?.split(' ')[1] as string;
-
-    console.log(token);
+   
     if (!token) {
       res.status(401).json({ message: 'Auth failed', success: false });
     }

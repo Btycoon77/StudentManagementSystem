@@ -120,7 +120,7 @@ class ItemController {
     updateItem(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const itemCode = req.body.ItemCode;
+                const itemCode = req.params.itemcode;
                 const translationsData = JSON.stringify(req.body.translations);
                 const updateData = yield connectDb_1.connectDb.query(`select public.update_item_with_translations(:p_itemcode,:p_translations)`, {
                     replacements: {
